@@ -7,7 +7,9 @@ document.querySelector(slideshow.container).innerHTML = `
 <div class="slideshow-info info"></div>
 <div class="slideshow-docs info">Arrow keys go back/forward.
 <span>space to toggle autoplay</span>
-<span>h to toggle help display</span></div>
+<span>h to toggle help display</span>
+<span>r to go back to the beginning</span>
+</div>
 <button class="info" id="slideshow-next">▶</button>
 <button class="info" id="slideshow-prev">◀</button>
 <button class="info" id="slideshow-autoplay"></button>
@@ -135,12 +137,16 @@ function toggleVisibility(style){
     style.visibility = ""
   }
 }
-
 function toggleHelpDisplay(){
   let helpDisplays = document.getElementsByClassName("info");
   for(let i = 0; i<helpDisplays.length;i++){
     toggleVisibility(helpDisplays[i].style)
   }
+}
+
+function resetToSlideOne(){
+  counter = 0;
+  validatecounter();
 }
 next.addEventListener('click', nextslide);
 prev.addEventListener('click', prevslide);
@@ -152,6 +158,7 @@ document.addEventListener('keyup', ev => {
   if (ev.key === "ArrowLeft") { prevslide(); }
   if (ev.key === " ") { toggleauto(); }
   if (ev.key === "h") { toggleHelpDisplay(); }
+  if (ev.key === "r") { resetToSlideOne(); }
 });
 validatecounter();
 } else {
