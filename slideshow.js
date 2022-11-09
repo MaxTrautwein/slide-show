@@ -4,12 +4,13 @@ styles.rel="stylesheet";
 styles.href="slideshow.css";
 document.head.appendChild(styles);
 document.querySelector(slideshow.container).innerHTML = `
-<div class="slideshow-info"></div>
-<div class="slideshow-docs">Arrow keys go back/forward.
-<span>space to toggle autoplay</span></div>
-<button id="slideshow-next">▶</button>
-<button id="slideshow-prev">◀</button>
-<button id="slideshow-autoplay"></button>
+<div class="slideshow-info info"></div>
+<div class="slideshow-docs info">Arrow keys go back/forward.
+<span>space to toggle autoplay</span>
+<span>h to toggle help display</span></div>
+<button class="info" id="slideshow-next">▶</button>
+<button class="info" id="slideshow-prev">◀</button>
+<button class="info" id="slideshow-autoplay"></button>
 <div class="slideshow-wrapper">
 </div>
 `;
@@ -71,6 +72,7 @@ function show() {
     vid.setAttribute('loop','true');
     vid.setAttribute('autoplay','true');
     vid.setAttribute('src', slideshow.folder + slideshow.media[counter]);
+    vid.setAttribute('id', slideshow.media[counter]);
     if (wrapper.dataset.loaded === 'false') {
       vid.addEventListener('canplaythrough', ev => {
         wrapper.appendChild(vid);
@@ -94,11 +96,17 @@ function show() {
 }
 function loaded() {
   wrapper.dataset.loaded = 'true';
+  //Play the Video for the Full Video Duration
+  var _speed = speed;
+  let curr = document.getElementById(slideshow.media[counter]);
+  if (curr != null) {
+    _speed = curr.duration*1000
+  }
   if (autoincrease && !last) {
     timeout = window.setTimeout(function(){
       counter++;
       validatecounter();
-    },speed);
+    },_speed);
   }
 }
 function nextslide() {
@@ -119,6 +127,21 @@ function toggleauto() {
   autoincrease = !autoincrease;
   validatecounter();
 };
+
+function toggleVisibility(style){
+  if(style.visibility == ""){
+    style.visibility = "hidden";
+  } else{
+    style.visibility = ""
+  }
+}
+
+function toggleHelpDisplay(){
+  let helpDisplays = document.getElementsByClassName("info");
+  for(let i = 0; i<helpDisplays.length;i++){
+    toggleVisibility(helpDisplays[i].style)
+  }
+}
 next.addEventListener('click', nextslide);
 prev.addEventListener('click', prevslide);
 autoplay.addEventListener('click',toggleauto);
@@ -128,6 +151,7 @@ document.addEventListener('keyup', ev => {
   if (ev.key === "ArrowUp") { history.back(); }
   if (ev.key === "ArrowLeft") { prevslide(); }
   if (ev.key === " ") { toggleauto(); }
+  if (ev.key === "h") { toggleHelpDisplay(); }
 });
 validatecounter();
 } else {
