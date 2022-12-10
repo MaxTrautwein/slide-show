@@ -8,7 +8,8 @@ document.querySelector(slideshow.container).innerHTML = `
 <div class="slideshow-docs info">Arrow keys go back/forward.
 <span>space to toggle autoplay</span>
 <span>h to toggle help display</span>
-<span>r to go back to the beginning</span>
+<span>r to go back to the beginning...</span>
+<span id="slideshowspeed">-s</span><input type="range" min="3" max="60" value="10" class="slider" id="sliderspeed">
 </div>
 <button class="info" id="slideshow-next">▶</button>
 <button class="info" id="slideshow-prev">◀</button>
@@ -21,14 +22,18 @@ const wrapper = document.querySelector('.slideshow-wrapper');
 const next = document.querySelector('#slideshow-next');
 const prev = document.querySelector('#slideshow-prev');
 const autoplay = document.querySelector('#slideshow-autoplay');
+const speedSlider = document.getElementById("sliderspeed");
+const speedDisplay = document.getElementById("slideshowspeed");
+
 let hash = 'counter' + slideshow.folder;
+let speedhash = 'speed' + slideshow.folder;
 let counter = localStorage.getItem(hash)||0;
 let autoincrease = slideshow.autoplay === 'no' ? false : true;
 let restart = slideshow.endless === 'no' ? false : true;
 let first = false;
 let last = false;
 let timeout = false;
-let speed = slideshow.speed || 3000;
+let speed = localStorage.getItem(speedhash) || 5000;
 let all = slideshow.media.length
 
 function validatecounter() {
@@ -148,6 +153,18 @@ function resetToSlideOne(){
   counter = 0;
   validatecounter();
 }
+
+function UpdateSpeed(){
+  speedDisplay.innerHTML = speedSlider.value + "s";
+  speed = speedSlider.value * 1000;
+  localStorage.setItem(speedhash,speed);
+}
+
+//Init Speed slider
+speedSlider.value = speed / 1000;
+UpdateSpeed();
+speedSlider.addEventListener('click',UpdateSpeed);
+
 next.addEventListener('click', nextslide);
 prev.addEventListener('click', prevslide);
 autoplay.addEventListener('click',toggleauto);

@@ -9,10 +9,24 @@
 </head>
 <body>
 <?php
+function scan_dir($dir) {
+  $ignored = array('.', '..', '.svn', '.htaccess');
+
+  $files = array();    
+  foreach (scandir($dir) as $file) {
+      if (in_array($file, $ignored)) continue;
+      $files[$file] = filemtime($dir . '/' . $file);
+  }
+
+  arsort($files);
+  $files = array_keys($files);
+
+  return ($files) ? $files : false;
+}
 if(!isset($_GET['dir'])){
   echo '<ul>';
   $dir    = './';
-  $files = array_filter(scandir($dir),"is_dir");
+  $files = array_filter(scan_dir($dir),"is_dir");
   foreach($files as $f) {
     if (!preg_match("/^\./",$f)) {
       $childfiles = scandir($f);
@@ -51,7 +65,9 @@ if(!isset($_GET['dir'])){
     autoplay: 'yes'
   }
 </script>
-<script src="slideshow.js"></script>
+<?php  
+echo '<script src="slideshow.js?v=' . rand(1,10) . '"></script>';
+?>
 <?php } ?>
 </body>
 </html>
